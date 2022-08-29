@@ -45,6 +45,7 @@ def validateJson(inputIn, field):
     else:
         return False
 
+
 def getInput(inputIn):
     if inputIn == False:
         return False
@@ -80,7 +81,6 @@ def getitem():
     print('Se valida JSON de entrada')
     if inputIn is not None:
         print('Hay un JSON de entrada')
-
 
         # property_id
         property_id = getInput(validateJson(inputIn, 'property_id'))
@@ -140,6 +140,149 @@ def getitem():
     output["status_id"] = status_id
     output["update_date"] = update_date
     output["estado"] = estado
+    output['message'] = 'Se obtuvieron correctamente los items'
+    output['response'] = True
+    con.commit()
+    cur.close()
+    con.close()
+    print('Ejecucion correcta')
+    return jsonify(output), 200
+
+
+'#---------------------------------------------------------------------------------------------------------------------'
+
+
+@app.route("/getitems", methods=['GET'])
+@cross_origin(supports_credentials=True)
+def getitems():
+
+    global city
+    print('getitem')
+    output = {'response': False}
+    propertyarray = []
+    inputIn = request.get_json(silent=True)
+    con = connectdb()
+    if con == False:
+        output['message'] = 'No se puede conectar a la BD'
+        return jsonify(output), 401
+
+    cur = con.cursor()
+    print('Se valida JSON de entrada')
+    if inputIn is not None:
+        print('Hay un JSON de entrada')
+        # date
+        if 'date' in inputIn and inputIn['date'] != '':
+            flag_date = True
+            date = inputIn['date']
+        else:
+            flag_date = False
+            date = None
+
+        # city
+        if 'city' in inputIn and inputIn['city'] != '':
+            flag_city = True
+            city = inputIn['city']
+        else:
+            flag_city = False
+            city = None
+
+
+    else:
+        print('No se proporciono JSON')
+        output['body'] = 'No se proporciono body'
+        return jsonify(output), 400
+
+    try:
+
+        if flag_date:
+            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
+                    f"where year ={date} and status_history.status_id != 1 and status_history.status_id != 2 ;"
+            print(query)
+            cur.execute(query)
+            property = cur.fetchall()
+            print(property)
+
+            if property is None or property == []:
+                print('No se encontraron usuarios')
+
+            for i in property:
+
+                id = i[0]
+                address = i[1]
+                city = i[2]
+                price = i[3]
+                description= i[4]
+                year = i[5]
+                status_id= i[8]
+                update_date=i[9]
+
+
+                iObj = {
+
+                    'id': id,
+                    'address': address,
+                    'city': city,
+                    'price': price,
+                    'description': description,
+                    'year': year,
+                    'status_id': status_id,
+                    'update_date': update_date,
+
+                }
+                propertyarray.append(iObj)
+            else:
+                print('Se obtuvieron los usuarios registrados')
+
+            output['Property'] = propertyarray
+
+        if flag_city:
+            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
+                    f"where city ='{city}' and status_history.status_id != 1 and status_history.status_id != 2 ;"
+            print(query)
+            cur.execute(query)
+            property = cur.fetchall()
+            print(property)
+
+            if property is None or property == []:
+                print('No se encontraron usuarios')
+
+            for i in property:
+
+                id = i[0]
+                address = i[1]
+                city = i[2]
+                price = i[3]
+                description= i[4]
+                year = i[5]
+                status_id= i[8]
+                update_date = i[9]
+
+
+                iObj = {
+
+                    'id': id,
+                    'address': address,
+                    'city': city,
+                    'price': price,
+                    'description': description,
+                    'year': year,
+                    'status_id': status_id,
+
+
+                }
+                propertyarray.append(iObj)
+            else:
+                print('Se obtuvieron los usuarios registrados')
+
+            output['Property'] = propertyarray
+
+    except Exception as e:
+        print(e)
+        print('Ocurrio un error al obtener los items')
+        output['message'] = 'Ocurrio un error al obtener los items '
+        return jsonify(output), 500
+
+
     output['message'] = 'Se obtuvieron correctamente los items'
     output['response'] = True
     con.commit()
