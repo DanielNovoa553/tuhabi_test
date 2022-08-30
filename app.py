@@ -176,7 +176,6 @@ def getitems():
             date = inputIn['date']
         else:
             flag_date = False
-            flag_date2 = False
             date = None
 
         # city
@@ -203,46 +202,10 @@ def getitems():
     try:
 
         if not flag_date and not flag_state and not flag_city:
-            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where status_history.status_id != 1 and status_history.status_id != 2 ;"
 
-            print(query)
-            cur.execute(query)
-            property = cur.fetchall()
-            print(property)
-
-            if property is None or property == []:
-                print('No se encontraron items')
-
-            for i in property:
-
-                id = i[0]
-                address = i[1]
-                city = i[2]
-                price = i[3]
-                description = i[4]
-                year = i[5]
-                status_id = i[8]
-                update_date = i[9]
-
-                iObj = {
-
-                    'id': id,
-                    'address': address,
-                    'city': city,
-                    'price': price,
-                    'description': description,
-                    'year': year,
-                    'status_id': status_id,
-                    'update_date': update_date,
-
-                }
-                propertyarray.append(iObj)
-            else:
-                print('Se obtuvieron los items registrados')
-
-            output['Property'] = propertyarray
-
+            print('No se proporciono valores')
+            output['message'] = 'No se proporciono valores en el Boby '
+            return jsonify(output), 400
         else:
 
             query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
@@ -255,7 +218,7 @@ def getitems():
                 query = query+f" and city ='{city}'"
 
             if state:
-                query = query + f" and status_id ={state}"
+                query = query+f" and status_id ={state}"
 
             print(query)
             cur.execute(query)
@@ -299,7 +262,6 @@ def getitems():
         print('Ocurrio un error al obtener los items')
         output['message'] = 'Ocurrio un error al obtener los items '
         return jsonify(output), 500
-
 
     output['message'] = 'Se obtuvieron correctamente los items'
     output['response'] = True
