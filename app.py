@@ -173,7 +173,6 @@ def getitems():
         # date
         if 'date' in inputIn and inputIn['date'] != '':
             flag_date = True
-            flag_date2 = True
             date = inputIn['date']
         else:
             flag_date = False
@@ -183,21 +182,17 @@ def getitems():
         # city
         if 'city' in inputIn and inputIn['city'] != '':
             flag_city = True
-            flag_city2 = True
             city = inputIn['city']
         else:
             flag_city = False
-            flag_city2 = False
             city = None
 
         # state
         if 'state' in inputIn and inputIn['state'] != '':
             flag_state = True
-            flag_state2 = True
             state = inputIn['state']
         else:
             flag_state = False
-            flag_state2 = False
             state = None
 
     else:
@@ -207,89 +202,10 @@ def getitems():
 
     try:
 
-        if flag_date and flag_state and flag_city:
+        if not flag_date and not flag_state and not flag_city:
             query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where year = {date} and city='{city}' and status_id ={state} and status_history.status_id != 1 and status_history.status_id != 2 ;"
-            print(query)
-            cur.execute(query)
-            property = cur.fetchall()
-            print(property)
+                    f"where status_history.status_id != 1 and status_history.status_id != 2 ;"
 
-            if property is None or property == []:
-                print('No se encontraron items')
-
-            for i in property:
-
-                id = i[0]
-                address = i[1]
-                city = i[2]
-                price = i[3]
-                description= i[4]
-                year = i[5]
-                status_id= i[8]
-                update_date=i[9]
-
-
-                iObj = {
-
-                    'id': id,
-                    'address': address,
-                    'city': city,
-                    'price': price,
-                    'description': description,
-                    'year': year,
-                    'status_id': status_id,
-                    'update_date': update_date,
-
-                }
-                propertyarray.append(iObj)
-            else:
-                print('Se obtuvieron los items registrados')
-
-            output['Property'] = propertyarray
-
-        if not flag_city and not flag_state:
-            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where year = {date} and status_history.status_id != 1 and status_history.status_id != 2 ;"
-            print(query)
-            cur.execute(query)
-            property = cur.fetchall()
-            print(property)
-
-            if property is None or property == []:
-                print('No se encontraron items')
-
-            for i in property:
-
-                id = i[0]
-                address = i[1]
-                city = i[2]
-                price = i[3]
-                description = i[4]
-                year = i[5]
-                status_id = i[8]
-                update_date = i[9]
-
-                iObj = {
-
-                    'id': id,
-                    'address': address,
-                    'city': city,
-                    'price': price,
-                    'description': description,
-                    'year': year,
-                    'status_id': status_id,
-                    'update_date': update_date,
-
-                }
-                propertyarray.append(iObj)
-            else:
-                print('Se obtuvieron los items registrados')
-            output['Property'] = propertyarray
-
-        if not flag_city2 and not flag_date2:
-            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where  status_id={state} and status_history.status_id != 1 and status_history.status_id != 2 ;"
             print(query)
             cur.execute(query)
             property = cur.fetchall()
@@ -327,203 +243,56 @@ def getitems():
 
             output['Property'] = propertyarray
 
-        if not flag_date and flag_city and flag_state:
+        else:
+
             query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where city = '{city}' and status_id={state} and status_history.status_id != 1 and status_history.status_id != 2 ;"
-            print(query)
-            cur.execute(query)
-            property = cur.fetchall()
-            print(property)
+                    f"where status_history.status_id != 1 and status_history.status_id != 2 "
 
-            if property is None or property == []:
-                print('No se encontraron items')
+            if date:
+                query = query+f" and year ={date}"
 
-            for i in property:
+            if city:
+                query = query+f" and city ='{city}'"
 
-                id = i[0]
-                address = i[1]
-                city = i[2]
-                price = i[3]
-                description = i[4]
-                year = i[5]
-                status_id = i[8]
-                update_date = i[9]
+            if state:
+                query = query + f" and status_id ={state}"
 
-                iObj = {
+        print(query)
+        cur.execute(query)
+        property = cur.fetchall()
+        print(property)
 
-                    'id': id,
-                    'address': address,
-                    'city': city,
-                    'price': price,
-                    'description': description,
-                    'year': year,
-                    'status_id': status_id,
-                    'update_date': update_date,
+        if property is None or property == []:
+            print('No se encontraron items')
 
-                }
-                propertyarray.append(iObj)
-            else:
-                print('Se obtuvieron los items registrados')
+        for i in property:
 
-            output['Property'] = propertyarray
+            id = i[0]
+            address = i[1]
+            city = i[2]
+            price = i[3]
+            description = i[4]
+            year = i[5]
+            status_id = i[8]
+            update_date = i[9]
 
-            if not flag_date and not flag_city and flag_state:
-                query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                        f"where status_id = {state} and status_history.status_id != 1 and status_history.status_id != 2 ;"
-                print(query)
-                cur.execute(query)
-                property = cur.fetchall()
-                print(property)
+            iObj = {
 
-                if property is None or property == []:
-                    print('No se encontraron items')
+                'id': id,
+                'address': address,
+                'city': city,
+                'price': price,
+                'description': description,
+                'year': year,
+                'status_id': status_id,
+                'update_date': update_date,
 
-                for i in property:
+            }
+            propertyarray.append(iObj)
+        else:
+            print('Se obtuvieron los items registrados')
 
-                    id = i[0]
-                    address = i[1]
-                    city = i[2]
-                    price = i[3]
-                    description = i[4]
-                    year = i[5]
-                    status_id = i[8]
-                    update_date = i[9]
-
-                    iObj = {
-
-                        'id': id,
-                        'address': address,
-                        'city': city,
-                        'price': price,
-                        'description': description,
-                        'year': year,
-                        'status_id': status_id,
-                        'update_date': update_date,
-
-                    }
-                    propertyarray.append(iObj)
-                else:
-                    print('Se obtuvieron los items registrados')
-                output['Property'] = propertyarray
-
-            if not flag_date and flag_city and not flag_state:
-                query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                        f"where year = {date} and city='{city}' and status_history.status_id != 1 and status_history.status_id != 2 ;"
-                print(query)
-                cur.execute(query)
-                property = cur.fetchall()
-                print(property)
-
-                if property is None or property == []:
-                    print('No se encontraron items')
-
-                for i in property:
-
-                    id = i[0]
-                    address = i[1]
-                    city = i[2]
-                    price = i[3]
-                    description = i[4]
-                    year = i[5]
-                    status_id = i[8]
-                    update_date = i[9]
-
-                    iObj = {
-
-                        'id': id,
-                        'address': address,
-                        'city': city,
-                        'price': price,
-                        'description': description,
-                        'year': year,
-                        'status_id': status_id,
-                        'update_date': update_date,
-
-                    }
-                    propertyarray.append(iObj)
-                else:
-                    print('Se obtuvieron los items registrados')
-                output['Property'] = propertyarray
-
-        if flag_date2 and not flag_city and flag_state2:
-            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where year = {date} and status_id='{state}' and status_history.status_id != 1 and status_history.status_id != 2 ;"
-            print(query)
-            cur.execute(query)
-            property = cur.fetchall()
-            print(property)
-
-            if property is None or property == []:
-                print('No se encontraron items')
-
-            for i in property:
-
-                id = i[0]
-                address = i[1]
-                city = i[2]
-                price = i[3]
-                description = i[4]
-                year = i[5]
-                status_id = i[8]
-                update_date = i[9]
-
-                iObj = {
-
-                    'id': id,
-                    'address': address,
-                    'city': city,
-                    'price': price,
-                    'description': description,
-                    'year': year,
-                    'status_id': status_id,
-                    'update_date': update_date,
-
-                }
-                propertyarray.append(iObj)
-            else:
-                print('Se obtuvieron los items registrados')
-            output['Property'] = propertyarray
-
-        if flag_city2 :
-            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where  city='{city}' and status_history.status_id != 1 and status_history.status_id != 2 ;"
-            print(query)
-            cur.execute(query)
-            property = cur.fetchall()
-            print(property)
-
-            if property is None or property == []:
-                print('No se encontraron items')
-
-            for i in property:
-
-                id = i[0]
-                address = i[1]
-                city = i[2]
-                price = i[3]
-                description = i[4]
-                year = i[5]
-                status_id = i[8]
-                update_date = i[9]
-
-                iObj = {
-
-                    'id': id,
-                    'address': address,
-                    'city': city,
-                    'price': price,
-                    'description': description,
-                    'year': year,
-                    'status_id': status_id,
-                    'update_date': update_date,
-
-                }
-                propertyarray.append(iObj)
-            else:
-                print('Se obtuvieron los items registrados')
-
-            output['Property'] = propertyarray
-
+        output['Property'] = propertyarray
 
     except Exception as e:
         print(e)
