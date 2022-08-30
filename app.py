@@ -157,7 +157,7 @@ def getitem():
 def getitems():
 
     global city
-    print('getitem')
+    print('getitems')
     output = {'response': False}
     propertyarray = []
     inputIn = request.get_json(silent=True)
@@ -257,42 +257,42 @@ def getitems():
             if state:
                 query = query + f" and status_id ={state}"
 
-        print(query)
-        cur.execute(query)
-        property = cur.fetchall()
-        print(property)
+            print(query)
+            cur.execute(query)
+            property = cur.fetchall()
+            print(property)
 
-        if property is None or property == []:
-            print('No se encontraron items')
+            if property is None or property == []:
+                print('No se encontraron items')
 
-        for i in property:
+            for i in property:
 
-            id = i[0]
-            address = i[1]
-            city = i[2]
-            price = i[3]
-            description = i[4]
-            year = i[5]
-            status_id = i[8]
-            update_date = i[9]
+                id = i[0]
+                address = i[1]
+                city = i[2]
+                price = i[3]
+                description = i[4]
+                year = i[5]
+                status_id = i[8]
+                update_date = i[9]
 
-            iObj = {
+                iObj = {
 
-                'id': id,
-                'address': address,
-                'city': city,
-                'price': price,
-                'description': description,
-                'year': year,
-                'status_id': status_id,
-                'update_date': update_date,
+                    'id': id,
+                    'address': address,
+                    'city': city,
+                    'price': price,
+                    'description': description,
+                    'year': year,
+                    'status_id': status_id,
+                    'update_date': update_date,
 
-            }
-            propertyarray.append(iObj)
-        else:
-            print('Se obtuvieron los items registrados')
+                }
+                propertyarray.append(iObj)
+            else:
+                print('Se obtuvieron los items registrados')
 
-        output['Property'] = propertyarray
+            output['Property'] = propertyarray
 
     except Exception as e:
         print(e)
