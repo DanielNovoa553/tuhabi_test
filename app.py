@@ -204,7 +204,7 @@ def getitems():
         if not flag_date and not flag_state and not flag_city:
 
             print('No se proporciono valores')
-            output['message'] = 'No se proporciono valores en el Boby '
+            output['message'] = 'No se proporciono valores en el Body '
             return jsonify(output), 400
         else:
 
