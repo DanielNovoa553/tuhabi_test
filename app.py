@@ -202,23 +202,9 @@ def getitems():
     try:
 
         if not flag_date and not flag_state and not flag_city:
-
-            print('No se proporciono valores en el body')
-            output['message'] = 'No se proporciono valores en el Body '
-            return jsonify(output), 400
-        else:
-
-            query = f"select *  from property inner join status_history on property.id = status_history.property_id  " \
-                    f"where status_history.status_id != 1 and status_history.status_id != 2 "
-
-            if date:
-                query = query+f" and year ={date}"
-
-            if city:
-                query = query+f" and city ='{city}'"
-
-            if state:
-                query = query+f" and status_id ={state}"
+            query = f"select * ,MAX(update_date) update_date  from " \
+                    f"status_history inner join property on property.id = status_history.property_id    where status_id " \
+                    f"!= 1 and status_id != 2 group by property_id "
 
             print(query)
             cur.execute(query)
@@ -230,18 +216,18 @@ def getitems():
 
             for i in property:
 
-                id = i[0]
-                address = i[1]
-                city = i[2]
-                price = i[3]
-                description = i[4]
-                year = i[5]
-                status_id = i[8]
-                update_date = i[9]
+                property_id = i[1]
+                status_id = i[2]
+                address = i[5]
+                city = i[6]
+                price = i[7]
+                description = i[8]
+                year = i[9]
+                update_date = i[10].strftime('%d-%m-%Y %H:%m:%S')
 
                 iObj = {
 
-                    'id': id,
+                    'property_id': property_id,
                     'address': address,
                     'city': city,
                     'price': price,
@@ -249,7 +235,58 @@ def getitems():
                     'year': year,
                     'status_id': status_id,
                     'update_date': update_date,
+                }
+                propertyarray.append(iObj)
+            else:
+                print('Se obtuvieron los items registrados')
 
+            output['Property'] = propertyarray
+
+        else:
+
+            query = f"select * ,MAX(update_date) update_date  from " \
+                    f"status_history inner join property on property.id = status_history.property_id    where status_id " \
+                    f"!= 1 and status_id != 2 "
+
+            if date:
+                query = query+f" and year ={date}"
+
+            if city:
+                query = query+f" and city ='{city}'"
+
+            if state:
+                query = query+f" and status_id ={state}"
+
+            query = query+f" group by property_id "
+            print(query)
+            cur.execute(query)
+            property = cur.fetchall()
+            print(property)
+
+            if property is None or property == []:
+                print('No se encontraron items')
+
+            for i in property:
+
+                property_id = i[1]
+                status_id = i[2]
+                address = i[5]
+                city = i[6]
+                price = i[7]
+                description = i[8]
+                year = i[9]
+                update_date = i[10].strftime('%d-%m-%Y %H:%m:%S')
+
+                iObj = {
+
+                    'property_id': property_id,
+                    'address': address,
+                    'city': city,
+                    'price': price,
+                    'description': description,
+                    'year': year,
+                    'status_id': status_id,
+                    'update_date': update_date,
                 }
                 propertyarray.append(iObj)
             else:
