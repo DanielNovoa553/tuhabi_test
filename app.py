@@ -222,7 +222,7 @@ def getitems():
                 price = i[7]
                 description = i[8]
                 year = i[9]
-                update_date = i[10].strftime('%d-%m-%Y %H:%m:%S')
+                update_date = i[10].strftime('%Y-%m-%d %H:%M:%S')
 
                 iObj = {
 
@@ -274,7 +274,7 @@ def getitems():
                 price = i[7]
                 description = i[8]
                 year = i[9]
-                update_date = i[10].strftime('%d-%m-%Y %H:%m:%S')
+                update_date = i[10].strftime('%Y-%m-%d %H:%M:%S')
 
                 iObj = {
 
