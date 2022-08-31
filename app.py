@@ -93,7 +93,6 @@ def getitem():
         output['body'] = 'No se proporciono body'
         return jsonify(output), 400
 
-
     try:
         print('Se realiza consulta a la base ')
         query = f"SELECT * FROM status_history WHERE property_id = {property_id}   " \
@@ -203,8 +202,8 @@ def getitems():
 
         if not flag_date and not flag_state and not flag_city:
             query = f"select * ,MAX(update_date) update_date  from " \
-                    f"status_history inner join property on property.id = status_history.property_id    where status_id " \
-                    f"!= 1 and status_id != 2 group by property_id "
+                    f"status_history inner join property on property.id = status_history.property_id where status_id " \
+                    f"!= 1 and status_id != 2 group by property_id order by property_id desc"
 
             print(query)
             cur.execute(query)
@@ -245,7 +244,7 @@ def getitems():
         else:
 
             query = f"select * ,MAX(update_date) update_date  from " \
-                    f"status_history inner join property on property.id = status_history.property_id    where status_id " \
+                    f"status_history inner join property on property.id = status_history.property_id where status_id " \
                     f"!= 1 and status_id != 2 "
 
             if date:
@@ -257,7 +256,7 @@ def getitems():
             if state:
                 query = query+f" and status_id ={state}"
 
-            query = query+f" group by property_id "
+            query = query+f" group by property_id order by property_id desc"
             print(query)
             cur.execute(query)
             property = cur.fetchall()
