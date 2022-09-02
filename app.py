@@ -61,7 +61,7 @@ def principal_metodo():
     return "Servicio Raiz tuhabi"
 
 
-'#--------------------------------------------------------------------------------------------------------------------'
+'#---------------------------------------------Obtener item por id-----------------------------------------------------'
 
 
 @app.route("/getitem", methods=['GET'])
@@ -117,7 +117,7 @@ def getitem():
                 print('El estado del item no puede ser visializado')
                 output['message'] = 'El estado del item no puede ser visializado'
                 return jsonify(output), 202
-            update_date = item[3].strftime('%d-%m-%Y %H:%M')
+            update_date = item[3].strftime('%d-%m-%Y %H:%M:%S')
 
             if status_id == 3:
                 estado = 'pre_venta'
@@ -148,7 +148,7 @@ def getitem():
     return jsonify(output), 200
 
 
-'#---------------------------------------------------------------------------------------------------------------------'
+'#----------------------------------------Obtener items por flitros----------------------------------------------------'
 
 
 @app.route("/getitems", methods=['GET'])
